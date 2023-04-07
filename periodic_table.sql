@@ -179,6 +179,14 @@ ALTER TABLE ONLY public.properties
 
 
 --
+-- Name: properties properties_type_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: freecodecamp
+--
+
+ALTER TABLE ONLY public.properties
+    ADD CONSTRAINT properties_type_id_fkey FOREIGN KEY (type_id) REFERENCES public.types(type_id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
