@@ -17,7 +17,7 @@ else
     # if a number save to atomic_number variable
     ATOMIC_NUMBER=$1
 
-    ATOMIC_RESULT=$($PSQL "SELECT * FROM properties INNER JOIN elements USING(atomic_number) WHERE atomic_number=$ATOMIC_NUMBER;")
+    ATOMIC_RESULT=$($PSQL "SELECT * FROM properties INNER JOIN elements USING(atomic_number) INNER JOIN types USING(type_id) WHERE atomic_number=$ATOMIC_NUMBER;")
 
     if [[ -z $ATOMIC_RESULT ]]
     then
