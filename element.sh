@@ -15,9 +15,9 @@ else
   if [[ $1 =~ ^[0-9]*$ ]]
   then
     # if a number save to atomic_number variable
-    ATOMIC_NUMBER=$1
+    ATOMIC_NUMBER_ARG=$1
 
-    ATOMIC_RESULT=$($PSQL "SELECT atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id, symbol, name FROM properties INNER JOIN elements USING(atomic_number) INNER JOIN types USING(type_id) WHERE atomic_number=$ATOMIC_NUMBER;")
+    ATOMIC_RESULT=$($PSQL "SELECT atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id, symbol, name FROM properties INNER JOIN elements USING(atomic_number) INNER JOIN types USING(type_id) WHERE atomic_number=$ATOMIC_NUMBER_ARG;")
 
     if [[ -z $ATOMIC_RESULT ]]
     then
@@ -26,18 +26,34 @@ else
 
     else 
 
-      echo "$ATOMIC_RESULT" | while IFS='|' read -r ATOMIC_NUM TYPE ATOMIC_MASS MELTING_POINT BOILING_POINT TYPE_ID SYMBOL NAME
+      echo "$ATOMIC_RESULT" | while IFS='|' read -r ATOMIC_NUMBER TYPE ATOMIC_MASS MELTING_POINT BOILING_POINT TYPE_ID SYMBOL NAME
       do
-        echo -e "The element with atomic number $ATOMIC_NUM is $NAME ($SYMBOL). It's a $TYPE, with a mass of $ATOMIC_MASS amu. $NAME has a melting point of $MELTING_POINT celsius and a boiling point of $BOILING_POINT celsius."
+        echo "The element with atomic number $ATOMIC_NUMBER is $NAME ($SYMBOL). It's a $TYPE, with a mass of $ATOMIC_MASS amu. $NAME has a melting point of $MELTING_POINT celsius and a boiling point of $BOILING_POINT celsius."
       done 
-
     fi
 
-  # # elif [[ $1 =~ (^[A-Z][a-z]{0,2}$) ]]
-  # then
+  elif [[ $1 =~ (^[A-Z][a-z]{0,2}$) ]]
+   then
 
-  #   echo "A symbol"
+    # echo "A symbol"
+
+    SYMBOL_ARG=$1
+
+    SYMBOL_RESULT=$($PSQL "SELECT atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id, symbol, name FROM properties INNER JOIN elements USING(atomic_number) INNER JOIN types USING(type_id) WHERE symbol='$SYMBOL_ARG';")
   
+    if [[ -z $SYMBOL_RESULT ]]
+    then
+       
+       echo "I could not find that element in the database."
+    
+    else 
+
+      echo "$SYMBOL_RESULT" | while IFS='|' read -r ATOMIC_NUMBER TYPE ATOMIC_MASS MELTING_POINT BOILING_POINT TYPE_ID SYMBOL NAME
+      do
+        echo "The element with atomic number $ATOMIC_NUMBER is $NAME ($SYMBOL). It'sa $TYPE, with a mass of $ATOMIC_MASS amu. $NAME has a melting point of $MELTING_POINT celsius and a boiling point of $BOILING_POINT celsius."
+      done
+    fi
+
   else
 
     echo "not a valid argument"
